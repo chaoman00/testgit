@@ -1,0 +1,28 @@
+<!DOCTYPE web-app PUBLIC
+        "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+        "http://java.sun.com/dtd/web-app_2_3.dtd" >
+
+<web-app>
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>classpath*:app.xml</param-value>
+  </context-param>
+
+  <servlet>
+    <servlet-name>HttpWeChatServlet</servlet-name>
+    <servlet-class>wechat.HttpWeChatServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>ManagerSSOServlet</servlet-name>
+    <servlet-class>wechat.ManagerSSOServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>HttpWeChatServlet</servlet-name>
+    <url-pattern>/HttpWeChatServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ManagerSSOServlet</servlet-name>
+    <url-pattern>/ManagerSSOServlet</url-pattern>
+  </servlet-mapping>
+</web-app>
