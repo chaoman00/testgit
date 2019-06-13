@@ -1,0 +1,62 @@
+一：前提准备:
+  1、
+    登录10.202.128.24,10.122.136.140服务器（weblogic用户）
+    建议备份AdminServer所在主机的DOMAIN_HOME目录，或者至少要备份DOMAIN_HOME/ security 和servers目录  ；
+	
+  2、登录10.202.128.24:7878/consol
+   建议在WebLogic管理控制台中新建一个临时的WebLogic管理员用户adminuser作为备份，具体步骤如下:
+		1）登录管理控制台；
+		2）依次选择Home > Summary of Security Realms > myrealm > Users and Groups标签页；
+		3）点击"新建" New按钮；
+		4）在Name输入框中输入:adminuser,然后输入该用户的密码，如Spdb@1234!，并再次输入密码确认；
+		5）adminuser新建完成后，点击adminuser用户名，然后选择Groups标签页；
+		6）在Groups标签页下，在Available列表中勾选Administrators，点击单箭头">"按钮将其选入Chosen列表；
+		7）点击Save按钮保存；
+
+二：
+（10.202.128.24/25,10.122.136.140/141 ）
+	1.登录10.202.128.24:7878/console	
+		使用用户weblogic，密码：******
+		在 console 中点击“安全领域”-“myrealm”-“用户和组”-“weblogic/monitor”-“口令”
+		填入新的密码后，点击“保存”
+	2. 登录10.202.128.24,10.122.136.140服务器（weblogic用户）
+		cd /app/xiaoi_domain(s)/bin
+		sh stopAdminServer
+		java -cp /weblogic/wlserver/server/lib/weblogic.jar weblogic.security.utils.AdminAccount weblogic Spdb@1234! .      
+		特点注意：最后有个“ .”，一个空格和一个点。其中倒数第二个weblogic代表用户名，最后一个weblogic代表密码。此命令将生成新的DefaultAuthenticatorInit.ldift文件覆盖原来的。
+		cd /app/xiaoi_domain(s)/security
+		mv DefaultAuthenticatorInit.ldift DefaultAuthenticatorInit.ldift.bak
+		mv /app/xiaoi_domain(s)/bin/DefaultAuthenticatorInit.ldift ./
+		cd /app/xiaoi_domain(s)/servers
+		进入每一个应用的目录，再 cd security
+		vi boot.porperties  (修改文件中用户名为：weblogic，密码为：新密码 )
+		cd /app/xiaoi_domain(s)/servers
+		sh startAdminServer	
+		sh stopapp
+		sh startapp
+	测验完毕执行第三步	
+	3. 登录10.202.128.25，10.122.136.141（weblogic用户）
+	cd /app/xiaoi_domain(s)/servers
+	进入每一个应用的目录，再 cd security
+		vi boot.porperties  (修改文件中用户名为：weblogic，密码为：新密码 )
+		cd /app/xiaoi_domain(s)/servers
+		sh startapp	
+		sh stopapp
+		
+	回退步骤
+	1.登录10.202.128.24:7878/console	
+		使用用户weblogic，密码：******
+		在 console 中点击“安全领域”-“myrealm”-“用户和组”-“weblogic/monitor”-“口令”
+	2. 登录10.202.128.24,10.122.136.140服务器（weblogic用户）
+		填入旧的密码后，点击“保存”
+		cd /app/xiaoi_domain(s)/bin
+		sh stopAdminServer
+		cd /app/xiaoi_domain(s)/security
+		mv DefaultAuthenticatorInit.ldift DefaultAuthenticatorInit.ldift.bak2
+		mv DefaultAuthenticatorInit.ldift.bak DefaultAuthenticatorInit.ldift
+		cd /app/xiaoi_domain(s)/servers
+		进入每一个应用的目录，再 cd security
+		vi boot.porperties  (修改文件中用户名为：weblogic，密码为：新密码 )
+		cd /app/xiaoi_domain(s)/servers
+		sh startAdminServer	
+		sh stopapp
